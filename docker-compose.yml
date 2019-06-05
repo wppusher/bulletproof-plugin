@@ -1,0 +1,50 @@
+version: '3.1'
+
+services:
+
+  wordpress:
+    image: wordpress
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: exampleuser
+      WORDPRESS_DB_PASSWORD: examplepass
+      WORDPRESS_DB_NAME: exampledb
+    volumes:
+      - .:/var/www/html/wp-content/plugins/bulletproof
+
+  db:
+    image: mysql:5.7
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: exampledb
+      MYSQL_USER: exampleuser
+      MYSQL_PASSWORD: examplepass
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+       - bulletproof_db_data:/var/lib/mysql
+
+  test_db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: testuser
+      MYSQL_PASSWORD: testpass
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+       - bulletproof_db_data_testing:/var/lib/mysql
+
+  composer:
+    image: composer
+    volumes:
+      - .:/var/www/html/wp-content/plugins/bulletproof
+    working_dir: /var/www/html/wp-content/plugins/bulletproof
+
+volumes:
+  bulletproof_db_data:
+  bulletproof_db_data_testing:
